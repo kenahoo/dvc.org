@@ -19,6 +19,7 @@ export const RightPanel = ({ headings, scrollToLink, githubLink }) => (
           key={`link-${headingIndex}`}
           onClick={() => scrollToLink('#' + slug)}
           href={`#${slug}`}
+          data-type={'subsection'}
         >
           {text}
         </HeadingLink>

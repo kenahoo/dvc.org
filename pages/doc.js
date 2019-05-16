@@ -10,6 +10,7 @@ import SearchForm from '../src/SearchForm'
 import Page404 from '../src/Page404'
 import PerfectScrollbar from 'perfect-scrollbar'
 import Hamburger from '../src/Hamburger'
+import $ from 'jquery'
 // utils
 import fetch from 'isomorphic-fetch'
 import kebabCase from 'lodash.kebabcase'
@@ -37,6 +38,34 @@ export default class Documentation extends Component {
   }
 
   componentDidMount() {
+    let lastcurrelem = null;
+    let lastcurrheight = 0;
+    let lastcurrindex = 0;
+    function onScroll(){
+      var scrollPos = $(document).scrollTop();
+      $('a[data-type=subsection]').each(function (index) {
+        var currLink = $(this);
+        var refElement = $(currLink.attr("href"));
+        if (refElement.position().top <= scrollPos && refElement.position().top>lastcurrheight) {
+          currLink.css({color: '#000000'});
+          if(lastcurrelem && lastcurrindex!==$('a[data-type=subsection]').length-1){
+            lastcurrelem.css({color:'#a0a8a5'});
+          }
+          lastcurrindex = index;
+          lastcurrelem = currLink;
+          lastcurrheight = refElement.position().top;
+        }else if(refElement.position().top <= scrollPos && refElement.position().top<lastcurrheight){
+          currLink.css({color: '#000000'});
+          if(lastcurrelem && lastcurrindex!==0){
+            lastcurrelem.css({color:'#a0a8a5'});
+          }
+          lastcurrindex = index;
+          lastcurrelem = currLink;
+          lastcurrheight = refElement.position().top;
+        }
+      });
+    }
+    $('#bodybag').on("scroll", onScroll);
     this.loadStateFromURL()
     this.initDocsearch()
     window.addEventListener('popstate', this.loadStateFromURL)
